@@ -10,28 +10,27 @@ public class ConexionBD {
     private static String USER="dantebd";
     private static String PASSWORD="abc123.";
     private static ConexionBD conexionBDInstance;
-    private Connection conn;
+    private static Connection conn;
 
     private ConexionBD(){
         abrirConexion();
     }
 
-    public static ConexionBD getConexionBDInstance (){
+    private static ConexionBD getConexionBDInstance (){
         if (conexionBDInstance == null){
             conexionBDInstance = new ConexionBD();
         }
         return conexionBDInstance;
     }
 
-    public Connection getConnection(){
+    public static Connection getConnection(){
         try {
             if(conn.isClosed()||conn==null){
-                abrirConexion();
+                getConexionBDInstance().abrirConexion();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return conn;
     }
 
@@ -40,7 +39,7 @@ public class ConexionBD {
         propiedades.put("user",USER);
         propiedades.put("password",PASSWORD);
         try {
-            this.conn = DriverManager.getConnection("jdbc:mysql://"+SERVER+":"+PUERTO+"/"+DATABASE,propiedades);
+            conn = DriverManager.getConnection("jdbc:mysql://"+SERVER+":"+PUERTO+"/"+DATABASE,propiedades);
         } catch (SQLException e) {
             e.printStackTrace();
         }

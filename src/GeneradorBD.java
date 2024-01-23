@@ -20,20 +20,20 @@ public class GeneradorBD {
     private static final int MAX_ZONAS_POR_MAPA = 5;
 
     public static void generarDatos() {
-        ConexionBD conexionBD = ConexionBD.getConexionBDInstance();
-        insertarRegiones(conexionBD);
-        insertarServidores(conexionBD);
-        insertarUsuarios(conexionBD);
-        insertarPersonajes(conexionBD);
-        insertarMapasConZonas(conexionBD);
+        
+        insertarRegiones();
+        insertarServidores();
+        insertarUsuarios();
+        insertarPersonajes();
+        insertarMapasConZonas();
     }
 
-    private static void insertarRegiones(ConexionBD conexionBD) {
+    private static void insertarRegiones( ) {
         Connection conexion = null;
         PreparedStatement statement = null;
 
         try {
-            conexion = conexionBD.getConnection();
+            conexion = ConexionBD.getConnection();
             statement = conexion.prepareStatement("INSERT INTO Regiones (nombre) VALUES (?)");
 
             for (String region : REGIONES) {
@@ -62,12 +62,12 @@ public class GeneradorBD {
         }
     }
 
-    private static void insertarServidores(ConexionBD conexionBD) {
+    private static void insertarServidores( ) {
         Connection conexion = null;
         PreparedStatement statement = null;
 
         try {
-            conexion = conexionBD.getConnection();
+            conexion = ConexionBD.getConnection();
             statement = conexion.prepareStatement("INSERT INTO Servidores (nombre, region_id) VALUES (?, ?)");
 
             for (int i = 0; i < NUM_SERVIDORES; i++) {
@@ -98,7 +98,7 @@ public class GeneradorBD {
         }
     }
 
-    private static void insertarUsuarios(ConexionBD conexionBD) {
+    private static void insertarUsuarios( ) {
         List<String> nombresReales = Arrays.asList(
                 "ANTONIO", "MANUEL", "JOSE", "FRANCISCO", "DAVID", "JUAN", "JAVIER", "DANIEL", "JOSE ANTONIO",
                 "FRANCISCO JAVIER", "JOSE LUIS", "CARLOS", "ALEJANDRO", "JESUS", "MIGUEL", "JOSE MANUEL",
@@ -112,12 +112,12 @@ public class GeneradorBD {
         PreparedStatement statement = null;
 
         try {
-            conexion = conexionBD.getConnection();
+            conexion = ConexionBD.getConnection();
             statement = conexion.prepareStatement("INSERT INTO Usuarios (nombre, codigo_uniq) VALUES (?, ?)");
 
             for (String nombre : nombresReales) {
                 statement.setString(1, nombre);
-                String codigoUnico = generarCodigoUnico(conexionBD);
+                String codigoUnico = generarCodigoUnico();
                 statement.setString(2, codigoUnico);
                 statement.addBatch();
             }
@@ -145,13 +145,13 @@ public class GeneradorBD {
         }
     }
 
-    private static void insertarPersonajes(ConexionBD conexionBD) {
+    private static void insertarPersonajes( ) {
         Random random = new Random();
         Connection conexion = null;
         PreparedStatement statement = null;
 
         try {
-            conexion = conexionBD.getConnection();
+            conexion = ConexionBD.getConnection();
             statement = conexion
                     .prepareStatement("INSERT INTO Personajes (nombre, usuario_id, servidor_id) VALUES (?, ?, ?)");
 
@@ -184,14 +184,14 @@ public class GeneradorBD {
         }
     }
 
-    private static void insertarMapasConZonas(ConexionBD conexionBD) {
+    private static void insertarMapasConZonas( ) {
         Random random = new Random();
         Connection conexion = null;
         PreparedStatement statementMapas = null;
         PreparedStatement statementZonas = null;
 
         try {
-            conexion = conexionBD.getConnection();
+            conexion = ConexionBD.getConnection();
             statementMapas = conexion
                     .prepareStatement("INSERT INTO Mapas (nombre, dificultad, servidor_id) VALUES (?, ?, ?)");
             statementZonas = conexion
@@ -243,7 +243,7 @@ public class GeneradorBD {
         }
     }
 
-    private static String generarCodigoUnico(ConexionBD conexionBD) {
+    private static String generarCodigoUnico( ) {
         String codigo = "";
         Connection conexion = null;
         PreparedStatement statement = null;
@@ -253,7 +253,7 @@ public class GeneradorBD {
             // Genera códigos aleatorios hasta conseguir uno que no exista en la base de
             // datos.
 
-            conexion = conexionBD.getConnection();
+            conexion = ConexionBD.getConnection();
             statement = conexion.prepareStatement("SELECT codigo_uniq FROM Usuarios");
             resultSet = statement.executeQuery();
             ArrayList<String> codigosBD = new ArrayList<>();
