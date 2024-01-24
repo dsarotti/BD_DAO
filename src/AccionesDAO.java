@@ -11,8 +11,8 @@ public class AccionesDAO {
         return select("SELECT U.nombre AS NombreUsuario, COUNT(P.id) AS NumeroPersonajes FROM Usuarios U LEFT JOIN Personajes P ON U.id = P.usuario_id GROUP BY U.id, U.nombre");
     }
 
-    public ResultSet getNumeroPersonajesDeUsuario(int idUsuario){
-        return select("SELECT U.nombre AS NombreUsuario, COUNT(P.id) AS NumeroPersonajes FROM Usuarios U LEFT JOIN Personajes P ON U.id = P.usuario_id WHERE U.nombre = '"+idUsuario+"' GROUP BY U.id, U.nombre");
+    public ResultSet getNumeroPersonajesDeUsuario(int codigoUnique){
+        return select("SELECT U.nombre , COUNT(P.id) AS NumeroPersonajes FROM Usuarios U LEFT JOIN Personajes P ON U.id = P.usuario_id WHERE U.codigo_uniq = '" +codigoUnique+ "' GROUP BY U.id, U.nombre");
     }
 
 
