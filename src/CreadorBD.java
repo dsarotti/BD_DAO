@@ -5,7 +5,7 @@ import java.sql.Statement;
 public class CreadorBD {
 
     public static void crearTablas() {
-        try (Connection conexion = ConexionBD.getConnection();
+        try (Connection conexion = ConexionBD.getConexionBDInstance().getConnection();
                 Statement statement = conexion.createStatement()) {
 
             // Tabla de regiones

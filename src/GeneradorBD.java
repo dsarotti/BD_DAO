@@ -33,7 +33,7 @@ public class GeneradorBD {
         PreparedStatement statement = null;
 
         try {
-            conexion = ConexionBD.getConnection();
+            conexion = ConexionBD.getConexionBDInstance().getConnection();
             statement = conexion.prepareStatement("INSERT INTO Regiones (nombre) VALUES (?)");
 
             for (String region : REGIONES) {
@@ -67,7 +67,7 @@ public class GeneradorBD {
         PreparedStatement statement = null;
 
         try {
-            conexion = ConexionBD.getConnection();
+            conexion = ConexionBD.getConexionBDInstance().getConnection();
             statement = conexion.prepareStatement("INSERT INTO Servidores (nombre, region_id) VALUES (?, ?)");
 
             for (int i = 0; i < NUM_SERVIDORES; i++) {
@@ -112,7 +112,7 @@ public class GeneradorBD {
         PreparedStatement statement = null;
 
         try {
-            conexion = ConexionBD.getConnection();
+            conexion = ConexionBD.getConexionBDInstance().getConnection();
             statement = conexion.prepareStatement("INSERT INTO Usuarios (nombre, codigo_uniq) VALUES (?, ?)");
 
             for (String nombre : nombresReales) {
@@ -151,7 +151,7 @@ public class GeneradorBD {
         PreparedStatement statement = null;
 
         try {
-            conexion = ConexionBD.getConnection();
+            conexion = ConexionBD.getConexionBDInstance().getConnection();
             statement = conexion
                     .prepareStatement("INSERT INTO Personajes (nombre, usuario_id, servidor_id) VALUES (?, ?, ?)");
 
@@ -191,7 +191,7 @@ public class GeneradorBD {
         PreparedStatement statementZonas = null;
 
         try {
-            conexion = ConexionBD.getConnection();
+            conexion = ConexionBD.getConexionBDInstance().getConnection();
             statementMapas = conexion
                     .prepareStatement("INSERT INTO Mapas (nombre, dificultad, servidor_id) VALUES (?, ?, ?)");
             statementZonas = conexion
@@ -253,7 +253,7 @@ public class GeneradorBD {
             // Genera códigos aleatorios hasta conseguir uno que no exista en la base de
             // datos.
 
-            conexion = ConexionBD.getConnection();
+            conexion = ConexionBD.getConexionBDInstance().getConnection();
             statement = conexion.prepareStatement("SELECT codigo_uniq FROM Usuarios");
             resultSet = statement.executeQuery();
             ArrayList<String> codigosBD = new ArrayList<>();
