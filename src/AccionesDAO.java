@@ -5,31 +5,32 @@ import java.sql.SQLException;
 
 public class AccionesDAO {
     private static final Connection conn = ConexionBD.getConexionBDInstance().getConnection();
-    private static PreparedStatement personajesPorUsuariosStm = null;
-    private static PreparedStatement numeroPersonajesDeUsuarioStm = null;
+    private static PreparedStatement numeroPersonajesPorCadaUsuarioStm = null;
+    private static PreparedStatement numeroPersonajesDeUnUsuarioStm = null;
     private static PreparedStatement personajesDeUnUsuarioStm = null;
     private static PreparedStatement numeroPersonajesDeUsuarioPorServidorStm = null;
     private static PreparedStatement numeroServidoresEnRegionStm = null;
     private static PreparedStatement numeroServidoresEnCadaRegionStm = null;
     private static PreparedStatement zonasDeUnMapaStm = null;
+    private static PreparedStatement servidoresPorRegionStm = null;
 
     private AccionesDAO() {
     };
 
     public static ResultSet getPersonajesPorUsuarios() {
         checkStatements();
-        return select(personajesPorUsuariosStm);
+        return select(numeroPersonajesPorCadaUsuarioStm);
     }
 
     public static ResultSet getNumeroPersonajesDeUsuario(int idUsuario) {
         checkStatements();
         try {
-            numeroPersonajesDeUsuarioStm.setString(1, Integer.toString(idUsuario));
+            numeroPersonajesDeUnUsuarioStm.setString(1, Integer.toString(idUsuario));
         } catch (SQLException e) {
             System.err.println("Error al preparar el statement para getNumeroPersonajesDeUsuario(" + idUsuario + ")");
             e.printStackTrace();
         }
-        return select(numeroPersonajesDeUsuarioStm);
+        return select(numeroPersonajesDeUnUsuarioStm);
     }
 
     public static ResultSet getPersonajesDeUnUsuario(int idUsuario) {
@@ -67,7 +68,7 @@ public class AccionesDAO {
         return select(numeroServidoresEnRegionStm);
     }
 
-    public static ResultSet getNumeroServidoresEnCadaRegionStm() {
+    public static ResultSet getNumeroServidoresEnCadaRegion() {
         checkStatements();
         return select(numeroServidoresEnCadaRegionStm);
     }
@@ -81,13 +82,18 @@ public class AccionesDAO {
             e.printStackTrace();
         }
 
-        return select(numeroServidoresEnRegionStm);
+        return select(zonasDeUnMapaStm);
+    }
+
+
+    public static ResultSet getServidoresPorRegion(){
+        
     }
 
     private static void checkStatements() {
-        if (personajesPorUsuariosStm == null
+        if (numeroPersonajesPorCadaUsuarioStm == null
                 ||
-                numeroPersonajesDeUsuarioStm == null
+                numeroPersonajesDeUnUsuarioStm == null
                 ||
                 personajesDeUnUsuarioStm == null
                 ||
@@ -97,16 +103,18 @@ public class AccionesDAO {
                 ||
                 numeroServidoresEnCadaRegionStm == null
                 ||
-                zonasDeUnMapaStm == null) {
+                zonasDeUnMapaStm == null
+                ||
+                servidoresPorRegionStm == null) {
             initStatements();
         }
     }
 
     private static void initStatements() {
         try {
-            personajesPorUsuariosStm = conn.prepareStatement(
+            numeroPersonajesPorCadaUsuarioStm = conn.prepareStatement(
                     "SELECT U.nombre AS NombreUsuario, COUNT(P.id) AS NumeroPersonajes FROM Usuarios U LEFT JOIN Personajes P ON U.id = P.usuario_id GROUP BY U.id, U.nombre");
-            numeroPersonajesDeUsuarioStm = conn.prepareStatement(
+            numeroPersonajesDeUnUsuarioStm = conn.prepareStatement(
                     "SELECT U.nombre , COUNT(P.id) AS NumeroPersonajes FROM Usuarios U LEFT JOIN Personajes P ON U.id = P.usuario_id WHERE U.id = ? GROUP BY U.id, U.nombre");
             personajesDeUnUsuarioStm = conn.prepareStatement(
                     "SELECT Usuarios.nombre AS nombre_usuario, Personajes.nombre AS nombre_personaje, Servidores.nombre AS nombre_servidor FROM Personajes JOIN Usuarios ON Personajes.usuario_id = Usuarios.id JOIN Servidores ON Personajes.servidor_id = Servidores.id WHERE Usuarios.id = ?");
@@ -117,6 +125,7 @@ public class AccionesDAO {
             numeroServidoresEnCadaRegionStm = conn.prepareStatement(
                     "SELECT Regiones.nombre AS nombre_region, COUNT(Servidores.id) AS num_servidores FROM Regiones LEFT JOIN Servidores ON Regiones.id = Servidores.region_id GROUP BY Regiones.nombre");
             zonasDeUnMapaStm = conn.prepareStatement("SELECT nombre, alto, ancho FROM Zonas WHERE mapa_id = ?");
+            servidoresPorRegionStm = conn.prepareStatement("SELECT Regiones.nombre AS nombre_region, Servidores.nombre AS nombre_servidor FROM Servidores JOIN Regiones ON Servidores.region_id = Regiones.id ORDER BY Regiones.nombre, Servidores.nombre");
 
         } catch (SQLException e) {
             System.err.println("Error al inicializar los Statement");
@@ -124,72 +133,32 @@ public class AccionesDAO {
         }
     }
 
-    public static void cerrarStatements(){
-        //Nota de la documentación de java.sql.Statement.close(): **Note:**When a Statement object is closed, its current ResultSet object, if one exists, is also closed.
-            if(personajesPorUsuariosStm!=null){
-                try {
-                    personajesPorUsuariosStm.close();
-                } catch (SQLException e) {
-                    System.err.println("Error al cerrar el Statement personajesPorUsuariosStm");
-                    e.printStackTrace();
-                }
+    /**
+     * Cierra todos los statements abiertos, al cerrarlos también se cierran los ResultSet que tengan asociados.
+     */
+    public static void cerrarTodosStatements() {
+        // Nota de la documentación de java.sql.Statement.close(): **Note:**When a
+        // Statement object is closed, its current ResultSet object, if one exists, is
+        // also closed.
+        cerrarStatement(numeroPersonajesPorCadaUsuarioStm);
+        cerrarStatement(personajesDeUnUsuarioStm);
+        cerrarStatement(numeroServidoresEnRegionStm);
+        cerrarStatement(numeroServidoresEnCadaRegionStm );
+        cerrarStatement(numeroPersonajesDeUnUsuarioStm);
+        cerrarStatement (numeroPersonajesDeUsuarioPorServidorStm );
+        cerrarStatement(numeroPersonajesPorCadaUsuarioStm );
+        cerrarStatement(zonasDeUnMapaStm );
+    }
+
+    private static void cerrarStatement(PreparedStatement statement) {
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println("Error al cerrar el Statement");
+                e.printStackTrace();
             }
-            if(personajesDeUnUsuarioStm!=null){
-                try {
-                    personajesDeUnUsuarioStm.close();
-                } catch (SQLException e) {
-                    System.err.println("Error al cerrar el Statement personajesDeUnUsuarioStm");
-                    e.printStackTrace();
-                }
-            }
-            if(numeroServidoresEnRegionStm!=null){
-                try {
-                    numeroServidoresEnRegionStm.close();
-                } catch (SQLException e) {
-                    System.err.println("Error al cerrar el Statement numeroServidoresEnRegionStm");
-                    e.printStackTrace();
-                }
-            }
-            if(numeroServidoresEnCadaRegionStm!=null){
-                try {
-                    numeroServidoresEnCadaRegionStm.close();
-                } catch (SQLException e) {
-                    System.err.println("Error al cerrar el Statement numeroServidoresEnCadaRegionStm");
-                    e.printStackTrace();
-                }
-            }
-            if(numeroPersonajesDeUsuarioStm!=null){
-                try {
-                    numeroPersonajesDeUsuarioStm.close();
-                } catch (SQLException e) {
-                    System.err.println("Error al cerrar el Statement numeroPersonajesDeUsuarioStm");
-                    e.printStackTrace();
-                }
-            }
-            if(numeroPersonajesDeUsuarioPorServidorStm!=null){
-                try {
-                    numeroPersonajesDeUsuarioPorServidorStm.close();
-                } catch (SQLException e) {
-                    System.err.println("Error al cerrar el Statement numeroPersonajesDeUsuarioPorServidorStm");
-                    e.printStackTrace();
-                }
-            }
-            if(personajesPorUsuariosStm!=null){
-                try {
-                    personajesPorUsuariosStm.close();
-                } catch (SQLException e) {
-                    System.err.println("Error al cerrar el Statement personajesPorUsuariosStm");
-                    e.printStackTrace();
-                }
-            }
-            if(zonasDeUnMapaStm!=null){
-                try {
-                    zonasDeUnMapaStm.close();
-                } catch (SQLException e) {
-                    System.err.println("Error al cerrar el Statement zonasDeUnMapaStm");
-                    e.printStackTrace();
-                }
-            }
+        }
     }
 
     private static ResultSet select(PreparedStatement statement) {
