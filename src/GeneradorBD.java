@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Clase que genera los datos para la base de datos y los inserta en lotes.
+ */
 public class GeneradorBD {
 
     private static final String[] REGIONES = { "EUROPA", "AMERICA", "ASIA" };
@@ -19,6 +22,9 @@ public class GeneradorBD {
     private static final int NUM_MAPAS = 20;
     private static final int MAX_ZONAS_POR_MAPA = 5;
 
+    /**
+     * Realiza la inserciones de los datos definidos en esta clase.
+     */
     public static void generarDatos() {
 
         insertarRegiones();
@@ -28,6 +34,9 @@ public class GeneradorBD {
         insertarMapasConZonas();
     }
 
+    /**
+     * Inserta las regiones en la base de datos.
+     */
     private static void insertarRegiones() {
         Connection conexion = null;
         PreparedStatement statement = null;
@@ -41,6 +50,7 @@ public class GeneradorBD {
                 statement.addBatch();
             }
             statement.executeBatch();
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -52,16 +62,12 @@ public class GeneradorBD {
                     e.printStackTrace();
                 }
             }
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
+    /**
+     * Inserta los servidores en la base de datos
+     */
     private static void insertarServidores() {
         Connection conexion = null;
         PreparedStatement statement = null;
@@ -88,16 +94,12 @@ public class GeneradorBD {
                     e.printStackTrace();
                 }
             }
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
+    /**
+     * Inserta los usuarios en la base de datos
+     */
     private static void insertarUsuarios() {
         List<String> nombresReales = Arrays.asList(
                 "ANTONIO", "MANUEL", "JOSE", "FRANCISCO", "DAVID", "JUAN", "JAVIER", "DANIEL", "JOSE ANTONIO",
@@ -134,16 +136,12 @@ public class GeneradorBD {
                     e.printStackTrace();
                 }
             }
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
+    /**
+     * Inserta los personajes en la base de datos.
+     */
     private static void insertarPersonajes() {
         Random random = new Random();
         Connection conexion = null;
@@ -173,16 +171,12 @@ public class GeneradorBD {
                     e.printStackTrace();
                 }
             }
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
+    /**
+     * Inserta los mapas y sus zonas en la base de datos
+     */
     private static void insertarMapasConZonas() {
         Random random = new Random();
         Connection conexion = null;
@@ -232,16 +226,13 @@ public class GeneradorBD {
                     e.printStackTrace();
                 }
             }
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
+    /**
+     * Genera un código de usuario único de 4 dígitos (Que no esté repetido en la abse de datos)
+     * @return el código de 4 dígitos generado.
+     */
     private static String generarCodigoUnico() {
         String codigo = "";
         Connection conexion = null;
@@ -293,6 +284,10 @@ public class GeneradorBD {
         return codigo;
     }
 
+    /**
+     * Genera un código de 4 dígitos aleatorio
+     * @return un código de 4 dígitos
+     */
     private static String generarCodigo() {
         Random random = new Random();
         StringBuilder codigo = new StringBuilder();

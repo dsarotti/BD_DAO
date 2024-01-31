@@ -2,8 +2,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Clase para crear las tablas de la base de datos
+ */
 public class CreadorBD {
 
+        /**
+         * Crea los statements y los ejecuta.
+         */
     public static void crearTablas() {
         try (Connection conexion = ConexionBD.getConexionBDInstance().getConnection();
                 Statement statement = conexion.createStatement()) {

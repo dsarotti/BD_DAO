@@ -6,7 +6,7 @@ import java.util.Scanner;
 /**
  * Clase que muestra un menú básico por la salida estándar para visualizar el estado de la base de datos
  */
-public class App {
+public class Main {
     public static void main(String[] args) throws Exception {
         ConexionBD conexionBD= ConexionBD.getConexionBDInstance();
         Scanner scanner = new Scanner(System.in);

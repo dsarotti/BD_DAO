@@ -7,7 +7,6 @@ import java.sql.SQLException;
  * Clase con métodos de acceso a la base de datos
  */
 public class AccionesDAO {
-    private static final Connection conn = ConexionBD.getConexionBDInstance().getConnection();
 
     /**
      * Statements para inicializar y resutilizar si fuera necesario
@@ -25,8 +24,7 @@ public class AccionesDAO {
     /**
      * Constructor privado
      */
-    private AccionesDAO() {
-    };
+    private AccionesDAO() {};
 
     /**
      * Devuelve el número de personajes por usuario, devolviendo el nombre de usuario y número de personajes siempre que el número sea igual o mayor que 1.
@@ -176,6 +174,7 @@ public class AccionesDAO {
      * Inicializa los Statements.
      */
     private static void initStatements() {
+        Connection conn = ConexionBD.getConexionBDInstance().getConnection();
         try {
             numeroPersonajesPorCadaUsuarioStm = conn.prepareStatement(
                     "SELECT U.nombre AS NombreUsuario, COUNT(P.id) AS NumeroPersonajes FROM Usuarios U LEFT JOIN Personajes P ON U.id = P.usuario_id GROUP BY U.id, U.nombre");
