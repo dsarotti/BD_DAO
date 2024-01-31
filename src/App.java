@@ -1,52 +1,63 @@
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Scanner;
 
+/**
+ * Clase que muestra un menú básico por la salida estándar para visualizar el estado de la base de datos
+ */
 public class App {
     public static void main(String[] args) throws Exception {
-
-        // ConexionBD conexionBD= ConexionBD.getConexionBDInstance();
+        ConexionBD conexionBD= ConexionBD.getConexionBDInstance();
+        Scanner scanner = new Scanner(System.in);
         
-        // System.out.println(
-        //     conexionBD.getConnection().isValid(200)?"Existe conexión!":"La conexion no está creada :("
-        // );
-        // System.out.println("Numero de personajes por usuario");
-        // ResultSet personajesPorUsuariosResultSet = AccionesDAO.getPersonajesPorUsuarios();
-        // printResultSet(personajesPorUsuariosResultSet);
-        // personajesPorUsuariosResultSet.close();
-
-        // System.out.println("Numero de personajes de un usuario");
-        // ResultSet numeroDePersonajesDeUnUsuarioResultSet = AccionesDAO.getNumeroPersonajesDeUsuario(15);
-        // printResultSet(numeroDePersonajesDeUnUsuarioResultSet);
-        // numeroDePersonajesDeUnUsuarioResultSet.close();
-        
-        // System.out.println("personajes de un usuario");
-        // ResultSet personajesDeUnUsuario = AccionesDAO.getPersonajesDeUnUsuario(1);
-        // printResultSet(personajesDeUnUsuario);
-        // personajesDeUnUsuario.close();
-
-        // System.out.println("numero de servidores en una región");
-        // ResultSet numeroServidoresEnRegion = AccionesDAO.getNumeroServidoresEnRegion("EUROPA");
-        // printResultSet(numeroServidoresEnRegion);
-        // numeroServidoresEnRegion.close();
-    
-        // System.out.println("numero de servidores en cada región");
-        // ResultSet numeroServidoresEnCadaRegionStm = AccionesDAO.getNumeroServidoresEnCadaRegionStm();
-        // printResultSet(numeroServidoresEnCadaRegionStm);
-        // numeroServidoresEnCadaRegionStm.close();
-
-        // System.out.println("zonas de un mapa");
-        // ResultSet zonasDeUnMapa = AccionesDAO.getZonasDeUnMapa(3);
-        // printResultSet(zonasDeUnMapa);
-        // zonasDeUnMapa.close();
-
+        // Si la base de datos está vacía, puede crear las tablas e introducir algunos datos nuevos con los siguientes métodos:
         // CreadorBD.crearTablas();
         // GeneradorBD.generarDatos();
-        // conexionBD.cerrarConexion();
 
-        AnalisisBD.rankServers();
-        AnalisisBD.listServers();
+        while (true) {
+            System.out.println("\nMenú:");
+            System.out.println("1. Rank Servers");
+            System.out.println("2. List Servers");
+            System.out.println("3. Get User PJ");
+            System.out.println("4. User PJs");
+            System.out.println("5. Area Map");
+            System.out.println("6. Salir");
 
+            System.out.print("Seleccione una opción: ");
+            int opcion = scanner.nextInt();
+
+            switch (opcion) {
+                case 1:
+                    AnalisisBD.rankServers();
+                    break;
+                case 2:
+                    AnalisisBD.listServers();
+                    break;
+                case 3:
+                    System.out.print("Ingrese el ID del usuario: ");
+                    int idUsuario = scanner.nextInt();
+                    AnalisisBD.getUserPJ(idUsuario);
+                    break;
+                case 4:
+                    AnalisisBD.userPJs();
+                    break;
+                case 5:
+                    System.out.print("Ingrese el ID del mapa: ");
+                    int idMapa = scanner.nextInt();
+                    AnalisisBD.areaMap(idMapa);
+                    break;
+                case 6:
+                    System.out.println("Saliendo del programa. ¡Hasta luego!");
+                    AccionesDAO.cerrarTodosStatements();
+                    conexionBD.cerrarConexion();
+                    scanner.close();
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Opción no válida. Inténtelo de nuevo.");
+            }
+        }
 
     }
 

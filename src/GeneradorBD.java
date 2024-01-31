@@ -20,7 +20,7 @@ public class GeneradorBD {
     private static final int MAX_ZONAS_POR_MAPA = 5;
 
     public static void generarDatos() {
-        
+
         insertarRegiones();
         insertarServidores();
         insertarUsuarios();
@@ -28,7 +28,7 @@ public class GeneradorBD {
         insertarMapasConZonas();
     }
 
-    private static void insertarRegiones( ) {
+    private static void insertarRegiones() {
         Connection conexion = null;
         PreparedStatement statement = null;
 
@@ -62,7 +62,7 @@ public class GeneradorBD {
         }
     }
 
-    private static void insertarServidores( ) {
+    private static void insertarServidores() {
         Connection conexion = null;
         PreparedStatement statement = null;
 
@@ -72,7 +72,7 @@ public class GeneradorBD {
 
             for (int i = 0; i < NUM_SERVIDORES; i++) {
                 statement.setString(1, SERVIDORES[i]);
-                statement.setInt(2, ((i + 1) % NUM_REGIONES) + 1); // Selecciona una región al azar
+                statement.setInt(2, ((i + 1) % NUM_REGIONES) + 1);
                 statement.addBatch();
             }
             statement.executeBatch();
@@ -98,15 +98,14 @@ public class GeneradorBD {
         }
     }
 
-    private static void insertarUsuarios( ) {
+    private static void insertarUsuarios() {
         List<String> nombresReales = Arrays.asList(
                 "ANTONIO", "MANUEL", "JOSE", "FRANCISCO", "DAVID", "JUAN", "JAVIER", "DANIEL", "JOSE ANTONIO",
                 "FRANCISCO JAVIER", "JOSE LUIS", "CARLOS", "ALEJANDRO", "JESUS", "MIGUEL", "JOSE MANUEL",
                 "MIGUEL ANGEL", "RAFAEL", "PABLO", "PEDRO", "ANGEL", "SERGIO", "FERNANDO", "JOSE MARIA",
                 "JORGE", "LUIS", "ALBERTO", "ALVARO", "JUAN CARLOS", "ADRIAN", "DIEGO", "JUAN JOSE", "RAUL",
                 "IVAN", "RUBEN", "JUAN ANTONIO", "OSCAR", "ENRIQUE", "RAMON", "ANDRES", "JUAN MANUEL",
-                "SANTIAGO", "VICENTE", "MARIO", "VICTOR", "JOAQUIN", "EDUARDO", "ROBERTO", "MARCOS",
-                "JAIME");
+                "SANTIAGO", "VICENTE", "MARIO", "VICTOR", "JOAQUIN", "EDUARDO", "ROBERTO", "MARCOS", "JAIME");
 
         Connection conexion = null;
         PreparedStatement statement = null;
@@ -145,7 +144,7 @@ public class GeneradorBD {
         }
     }
 
-    private static void insertarPersonajes( ) {
+    private static void insertarPersonajes() {
         Random random = new Random();
         Connection conexion = null;
         PreparedStatement statement = null;
@@ -184,7 +183,7 @@ public class GeneradorBD {
         }
     }
 
-    private static void insertarMapasConZonas( ) {
+    private static void insertarMapasConZonas() {
         Random random = new Random();
         Connection conexion = null;
         PreparedStatement statementMapas = null;
@@ -243,7 +242,7 @@ public class GeneradorBD {
         }
     }
 
-    private static String generarCodigoUnico( ) {
+    private static String generarCodigoUnico() {
         String codigo = "";
         Connection conexion = null;
         PreparedStatement statement = null;
@@ -263,10 +262,10 @@ public class GeneradorBD {
 
             while (!salir) {
                 codigo = generarCodigo();
-                salir=true;
+                salir = true;
                 for (String codigobd : codigosBD) {
                     if (codigo.equals(codigobd)) {
-                        salir=false;
+                        salir = false;
                         System.out.println("Encontrada coincidencia!");
                         break;
                     }
